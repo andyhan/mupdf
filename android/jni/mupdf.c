@@ -1512,6 +1512,8 @@ JNI_FN(MuPDFCore_addInkAnnotationInternal)(JNIEnv * env, jobject thiz, jobjectAr
 
 			counts[i] = count;
 			total += count;
+			
+			(*env)->DeleteLocalRef(env, arc);
 		}
 
 		pts = fz_malloc_array(ctx, total, sizeof(fz_point));
@@ -1530,7 +1532,11 @@ JNI_FN(MuPDFCore_addInkAnnotationInternal)(JNIEnv * env, jobject thiz, jobjectAr
 				pts[k].y = pt ? (*env)->GetFloatField(env, pt, y_fid) : 0.0f;
 				fz_transform_point(&pts[k], &ctm);
 				k++;
+				
+				(*env)->DeleteLocalRef(env, pt);
 			}
+			
+			(*env)->DeleteLocalRef(env, arc);
 		}
 
 		annot = (fz_annot *)pdf_create_annot(idoc, (pdf_page *)pc->page, FZ_ANNOT_INK);
